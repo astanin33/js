@@ -35,3 +35,5 @@ if (isNaN(productCost)) {
     // Виведення результату за допомогою alert
     alert(`1200: ${productCost} грн\nПодаток (20%): ${taxAmount} грн\nЗагальна вартість з податком: ${totalCost} грн`);
 }
+asdsad  JSON            
+sdad
