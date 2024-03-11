@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Exchange</title>
+</head>
+<body>
+    <select id='from'></select> 
+    <select id='to'></select> 
+    <div id='rate'></div> 
+    <input type='number' id='amount' /> 
+    <div id='result'></div> 
+
+    <script>
+        fetch('https://open.er-api.com/v6/latest/USD')
+            .then(res => res.json())
+            .then(data => {
+                const fromSelect = document.getElementById('from');
+                const toSelect = document.getElementById('to');
+                const rateDiv = document.getElementById('rate');
+                const amountInput = document.getElementById('amount');
+                const resultDiv = document.getElementById('result');
+
+                for (let currency in data.rates) {
+                    let optionFrom = document.createElement('option');
+                    optionFrom.innerText = currency;
+                    fromSelect.append(optionFrom);
+
+                    let optionTo = document.createElement('option');
+                    optionTo.innerText = currency;
+                    toSelect.append(optionTo);
+                }
+
+                function updateRates() {
+                    const fromCurrency = fromSelect.value;
+                    const toCurrency = toSelect.value;
+                    const rate = data.rates[toCurrency] / data.rates[fromCurrency];
+                    rateDiv.textContent = `Курс: 1 ${fromCurrency} = ${rate.toFixed(4)} ${toCurrency}`;
+                }
+
+                function convertCurrency() {
+                    const fromCurrency = fromSelect.value;
+                    const toCurrency = toSelect.value;
+                    const rate = data.rates[toCurrency] / data.rates[fromCurrency];
+                    const amount = parseFloat(amountInput.value);
+                    const result = amount * rate;
+                    resultDiv.textContent = `Результат: ${result.toFixed(2)} ${toCurrency}`;
+                }
+
+                fromSelect.onchange = updateRates;
+                toSelect.onchange = updateRates;
+                amountInput.oninput = convertCurrency;
+
+                
+                updateRates();
+                convertCurrency();
+            });
+    </script>
+</body>
+</html>
