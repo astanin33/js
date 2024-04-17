@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Client</title>
+</head>
+<body>
+    <link rel="stylesheet" href="js17.js">
+<input type="text" id="nickInput" placeholder="Ваш нік">
+<input type="text" id="messageInput" placeholder="Ваше повідомлення">
+<button onclick="sendAndCheck()">Відправити</button>
+<div id="chatContainer"></div>
+
+<script>
+async function jsonPost(url, data) {
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+    return await response.json();
+}
+
+let nextMessageId = 0;
+
+async function sendMessage(nick, message) {
+    await jsonPost("http://students.a-level.com.ua:10012", {func: 'addMessage', nick, message});
+}
+
+async function getMessages() {
+    const response = await jsonPost("http://students.a-level.com.ua:10012", {func: 'getMessages', messageId: nextMessageId});
+    const messages = response.messages;
+    nextMessageId = response.nextMessageId;
+    return messages;
+}
+
+async function sendAndCheck() {
+    const nick = document.getElementById("nickInput").value;
+    const message = document.getElementById("messageInput").value;
+    await sendMessage(nick, message);
+    await getMessages().then(messages => {
+        const chatContainer = document.getElementById("chatContainer");
+        messages.forEach(msg => {
+            const div = document.createElement("div");
+            div.textContent = `${msg.nick}: ${msg.message}`;
+            chatContainer.appendChild(div);
+        });
+    });
+}
+
+async function checkLoop() {
+    while (true) {
+        await getMessages().then(messages => {
+            const chatContainer = document.getElementById("chatContainer");
+            messages.forEach(msg => {
+                const div = document.createElement("div");
+                div.textContent = `${msg.nick}: ${msg.message}`;
+                chatContainer.appendChild(div);
+            });
+        });
+        await delay(2000); // Пауза між перевірками повідомлень
+    }
+}
+
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+checkLoop(); // Початок періодичної перевірки повідомлень
+</script>
+</body>
+</html>
