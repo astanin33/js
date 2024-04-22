@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedestrian Traffic Light</title>
+<style>
+  .light {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin: 10px;
+  }
+  #red { background-color: red; }
+  #green { background-color: gray; }
+</style>
+</head>
+<body>
+  <div id="red" class="light"></div>
+  <div id="green" class="light"></div>
+  <button id="button">Натисніть для зеленого світла</button>
+
+  <script>
+   
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+    function turnRed() {
+      document.getElementById('red').style.backgroundColor = 'red';
+      document.getElementById('green').style.backgroundColor = 'gray';
+    }
+
+    function turnGreen() {
+      document.getElementById('red').style.backgroundColor = 'gray';
+      document.getElementById('green').style.backgroundColor = 'green';
+    }
+
+    async function pedestrianTrafficLight() {
+      while (true) {
+        turnGreen();
+        await delay(5000); 
+        turnRed();
+        await delay(2000); 
+      }
+    }
+
+    
+    document.getElementById('button').addEventListener('click', () => {
+      
+      document.getElementById('button').disabled = true;
+      setTimeout(() => {
+        document.getElementById('button').disabled = false;
+      }, 10000); 
+      setTimeout(() => {
+        turnGreen();
+      }, 2000);
+    });
+    pedestrianTrafficLight();
+  </script>
+</body>
+</html>
